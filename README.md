@@ -1,13 +1,9 @@
 # Part 1: Create EKS Cluster with eksctl
 
-What you'll create:
-1 EKS Cluster
-3 Worker Nodes (EC2 node group)
-1 Fargate Profile
-
+What you'll create: 1 EKS Cluster, 3 Worker Nodes (EC2 node group), 1 Fargate Profile
 
 Step 1 — Create the EKS Cluster with Node Group. (change Region and if you want to use config file check https://docs.aws.amazon.com/eks/latest/eksctl/creating-and-managing-clusters.html)
-#bash 
+ 
 eksctl create cluster \
   --name demo-cluster \
   --version 1.29 \
@@ -25,7 +21,7 @@ Step 2 — Verify the Cluster & Nodes
 bash# Check cluster is active
 eksctl get cluster --name demo-cluster --region eu-north-1
 
-## Check all 3 nodes are Ready
+Check all 3 nodes are Ready
 kubectl get nodes
 
 Step 3 — Create the Fargate Profile
@@ -33,7 +29,7 @@ Fargate profiles require a namespace to associate with. First create the namespa
 bash# Create a namespace for Fargate workloads
 kubectl create namespace fargate-app
 
-## Create the Fargate profile
+Create the Fargate profile
 eksctl create fargateprofile \
   --cluster demo-cluster \
   --name demo-fargate-profile \
@@ -44,7 +40,6 @@ eksctl create fargateprofile \
 
 
 Step 4 — Verify the Fargate Profile
-bash
 eksctl get fargateprofile \
   --cluster demo-cluster \
   --region eu-north-1
@@ -57,7 +52,7 @@ Step 5 — Verify Everything Together
 bash# All nodes (EC2 + Fargate virtual nodes)
 kubectl get nodes
 
-## Cluster info
+Cluster info
 kubectl cluster-info
 
 # Part 2: Deploy MySQL and phpMyAdmin on EKS
@@ -147,7 +142,7 @@ Step 8 — Verify Both Deployments
 bash# Check all pods are Running
 kubectl get pods -n mysql-app
 
-## Check services
+Check services
 kubectl get svc -n mysql-app
 Expected output:
 NAME          TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)
@@ -170,7 +165,7 @@ The NODE column should show EC2 node names (e.g. ip-192-168-x-x.eu-north-1.compu
 Summary
 ResourceDetailsNamespacemysql-appMySQLBitnami chart, bitnamilegacy/mysql imagephpMyAdminBitnami chart, bitnamilegacy/phpmyadmin imageAccessVia LoadBalancer external IP on port 80NodesEC2 (demo-nodes node group)
 
-## Troubleshooting
+Troubleshooting
 bash# If pods are stuck in Pending
 kubectl describe pod <pod-name> -n mysql-app
 
@@ -184,10 +179,8 @@ Deployed into the fargate-app namespace (which is already linked to the Fargate 
 
 
 Step 1 — Verify your Fargate Profile is Ready
-bash
 eksctl get fargateprofile --cluster demo-cluster --region eu-north-1
 Make sure fargate-app namespace is listed. If not, create it:
-bash
 eksctl create fargateprofile \
   --cluster demo-cluster \
   --name demo-fargate-profile \
@@ -195,12 +188,10 @@ eksctl create fargateprofile \
   --region eu-north-1
 
 Step 2 — Create the Namespace
-bash
 kubectl create namespace fargate-app
 
 Step 3 — Create the Deployment YAML
-Create a file called java-app-deployment.yaml:
-yaml
+Create java-app-deployment.yaml:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -244,7 +235,7 @@ spec:
 
 
 Step 4 — Create a Service YAML
-Create a file called java-app-service.yaml:
+Create java-app-service.yaml:
 yamlapiVersion: v1a
 kind: Service
 metadata:
@@ -260,28 +251,30 @@ spec:
       targetPort: 8080
 
 Step 5 — Deploy the Application
-bashkubectl apply -f java-app-deployment.yaml
+kubectl apply -f java-app-deployment.yaml
 kubectl apply -f java-app-service.yaml
 
 Step 6 — Verify Pods are Running on Fargate
-bash# Watch pods come up (Fargate takes ~1-2 min per pod)
+Watch pods come up (Fargate takes ~1-2 min per pod)
 kubectl get pods -n fargate-app -w
+
 Expected output:
 NAME                        READY   STATUS    RESTARTS   AGE
 java-app-xxxxxxxxx-xxxxx   1/1     Running   0          2m
 java-app-xxxxxxxxx-xxxxx   1/1     Running   0          2m
 java-app-xxxxxxxxx-xxxxx   1/1     Running   0          2m
+
 Confirm they're on Fargate nodes:
-bashkubectl get pods -n fargate-app -o wide
+kubectl get pods -n fargate-app -o wide
 The NODE column should show fargate- prefixed node names.
 
 Step 7 — Get the External URL
-bashkubectl get svc java-app-service -n fargate-app
+kubectl get svc java-app-service -n fargate-app
 Copy the EXTERNAL-IP and open in your browser:
 http://<EXTERNAL-IP>/
 
 Step 8 — Verify Replica Count
-bashkubectl get deployment java-app -n fargate-app
+kubectl get deployment java-app -n fargate-app
 Expected:
 NAME       READY   UP-TO-DATE   AVAILABLE
 java-app   3/3     3            3
