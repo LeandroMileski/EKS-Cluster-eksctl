@@ -127,46 +127,7 @@ helm install phpmyadmin bitnami/phpmyadmin \
 
 # Part 3: Deploy Java Application on Fargate via YAML file
 
-## java-app-deployment.yaml
+## Step 1 — Config java-app-deployment.yaml
 
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: java-app
-  namespace: fargate-app
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: java-app
-  template:
-    metadata:
-      labels:
-        app: java-app
-    spec:
-      containers:
-        - name: java-app
-          image: <your-dockerhub-or-ecr-image>
-          ports:
-            - containerPort: 8080
-          env:
-            - name: DB_HOST
-              value: "mysql.mysql-app.svc.cluster.local"
-            - name: DB_PORT
-              value: "3306"
-            - name: DB_NAME
-              value: "mydb"
-            - name: DB_USER
-              value: "myuser"
-            - name: DB_PASSWORD
-              value: "mypassword123"
-          resources:
-            requests:
-              cpu: "250m"
-              memory: "512Mi"
-            limits:
-              cpu: "500m"
-              memory: "1Gi"
-```
 ⚠️ Replace <your-dockerhub-or-ecr-image> with your actual image. Fargate requires a valid, accessible container image.
+
