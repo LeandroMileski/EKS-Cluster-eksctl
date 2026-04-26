@@ -1,3 +1,27 @@
+This cloud architecture project combines Kubernetes, AWS, CI/CD, and autoscaling.
+
+**Core Components** 
+- Infrastructure (AWS EKS)  
+  - 1 EKS Cluster (via eksctl)  
+    EC2 Node Group (auto-scaled)  
+    AWS Fargate profile (serverless workloads)
+- Data Layer
+  - MySQL deployed via Helm
+    phpMyAdmin for database management
+- Application Layer
+  - Java microservice deployed on Kubernetes
+    Runs on Fargate (serverless compute)
+- CI/CD Pipeline
+  - Jenkins pipeline  
+    Docker image build & push  
+    Automated deployment to EKS
+- Scalability & Cost Optimization
+  - Horizontal Pod Autoscaler (HPA)
+    Cluster Autoscaler (node scaling)  
+
+  
+---
+
 # Part 1: Create EKS Cluster with eksctl
 
 **What you'll create:**  
