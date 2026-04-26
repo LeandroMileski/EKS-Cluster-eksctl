@@ -1,3 +1,20 @@
+*Task - Migrate the existing Kubernetes setup to AWS.*  
+*Action:*
+1. Provisioned a managed Kubernetes cluster using Amazon EKS  
+2. Designed a hybrid compute architecture:   
+  EC2 node group for stateful workloads (MySQL)  
+  AWS Fargate for serverless application workloads  
+3. Re-deployed the application using:  
+  Helm charts (MySQL + phpMyAdmin)  
+  Kubernetes YAML manifests (Java app)
+4. Implemented a CI/CD pipeline with Jenkins:  
+  Automated Docker image build & push  
+  Enabled rolling deployments using kubectl set image
+5. Configured autoscaling:  
+  Horizontal Pod Autoscaler (HPA)  
+  Cluster Autoscaler for node scaling
+
+
 This cloud architecture project combines Kubernetes, AWS, CI/CD, and autoscaling.
 
 **Core Components** 
@@ -6,10 +23,10 @@ This cloud architecture project combines Kubernetes, AWS, CI/CD, and autoscaling
     EC2 Node Group (auto-scaled)  
     AWS Fargate profile (serverless workloads)
 - Data Layer
-  - MySQL deployed via Helm
+  - MySQL deployed via Helm  
     phpMyAdmin for database management
 - Application Layer
-  - Java microservice deployed on Kubernetes
+  - Java microservice deployed on Kubernetes  
     Runs on Fargate (serverless compute)
 - CI/CD Pipeline
   - Jenkins pipeline  
